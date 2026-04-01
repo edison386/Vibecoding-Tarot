@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Night Arcana | 解析</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page-reading">
+    <div class="bg-glow bg-glow-left" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-right" aria-hidden="true"></div>
+    <div class="grain-overlay" aria-hidden="true"></div>
+
+    <main class="app-shell app-shell-reading">
+      <div class="brand-crest">Night Arcana</div>
+
+      <header class="page-header page-header-reading">
+        <div class="page-header-copy">
+          <p class="eyebrow">Reading Chamber</p>
+          <h1 class="page-title">牌面已经翻开，解析开始显影。</h1>
+          <p class="page-summary">
+            先看三张牌的正逆位，再读整体脉络、风险点和行动建议。
+          </p>
+        </div>
+        <div class="step-pill">03 · 解析</div>
+      </header>
+
+      <section class="question-strip question-strip-emphasis">
+        <div>
+          <p class="strip-label">Your Question</p>
+          <p id="reading-question" class="question-echo"></p>
+        </div>
+        <button id="restart-btn" class="ghost-btn" type="button">重新提问</button>
+      </section>
+
+      <section class="reading-topology">
+        <section class="reveal-stage reveal-stage-premium">
+          <div id="reading-cards" class="reading-cards" aria-label="翻牌结果"></div>
+          <p id="status-message" class="status-message" aria-live="assertive"></p>
+        </section>
+
+        <aside class="insight-panel" aria-label="仪式说明">
+          <p class="insight-kicker">Interpretation Flow</p>
+          <h2>三张牌不是孤立的。</h2>
+          <p>
+            我们会先展示每张牌的朝向，再把它们放进同一个问题语境中，生成更完整的解释链路。
+          </p>
+          <div class="insight-metrics">
+            <div class="insight-metric">
+              <span>3</span>
+              <p>张牌共同构成一轮解读</p>
+            </div>
+            <div class="insight-metric">
+              <span>1</span>
+              <p>条综合总结，串联整体走势</p>
+            </div>
+            <div class="insight-metric">
+              <span>3</span>
+              <p>条行动建议，帮助落到现实</p>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="analysis-panel" class="analysis-panel analysis-panel-premium" hidden>
+        <h2>本次牌阵解读</h2>
+        <p id="analysis-source" class="analysis-source" hidden></p>
+        <div id="analysis-cards" class="analysis-cards"></div>
+        <article class="analysis-summary">
+          <h3>综合总结</h3>
+          <p id="summary-text"></p>
+        </article>
+        <article class="analysis-summary">
+          <h3>风险点</h3>
+          <p id="risk-text"></p>
+        </article>
+        <article class="analysis-summary">
+          <h3>行动建议</h3>
+          <ul id="advice-list"></ul>
+        </article>
+      </section>
+    </main>
+
+    <script src="/shared.js" defer></script>
+    <script src="/reading.js" defer></script>
+  </body>
+</html>

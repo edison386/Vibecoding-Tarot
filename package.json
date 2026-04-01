@@ -1,0 +1,15 @@
+{
+  "name": "tarot-dark-web",
+  "version": "1.0.0",
+  "description": "Dark tarot reading web app with animated card ring",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

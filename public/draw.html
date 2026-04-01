@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Night Arcana | 抽卡</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page-stage">
+    <div class="bg-glow bg-glow-left" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-right" aria-hidden="true"></div>
+    <div class="grain-overlay" aria-hidden="true"></div>
+
+    <main class="app-shell app-shell-stage">
+      <div class="brand-crest">Night Arcana</div>
+
+      <header class="page-header page-header-stage">
+        <div class="page-header-copy">
+          <p class="eyebrow">Floating Spatial Spread</p>
+          <h1 class="page-title">让三维牌阵慢慢转向你。</h1>
+          <p class="page-summary">
+            将鼠标移到左右边缘驱动旋转，进入中心区域时，牌阵会自然缓下来。
+          </p>
+        </div>
+        <div class="step-pill">02 · 抽卡</div>
+      </header>
+
+      <section class="question-strip question-strip-emphasis">
+        <div>
+          <p class="strip-label">Current Question</p>
+          <p id="question-echo" class="question-echo"></p>
+        </div>
+        <a id="restart-link" class="ghost-link" href="/">重新提问</a>
+      </section>
+
+      <section class="table-stage table-stage-grand">
+        <div class="stage-rune stage-rune-left" aria-hidden="true"></div>
+        <div class="stage-rune stage-rune-right" aria-hidden="true"></div>
+        <div class="orbit-halo" aria-hidden="true"></div>
+        <div class="orbit-core" aria-hidden="true"></div>
+        <div id="ring-container" class="ring-container" aria-label="抽牌区"></div>
+      </section>
+
+      <section class="stage-meta stage-meta-grand">
+        <p class="selection-counter" id="selection-counter">已选择 0 / 3 张</p>
+        <div class="hint-row" aria-label="操作提示">
+          <span class="hint-chip">边缘驱动旋转</span>
+          <span class="hint-chip">中心区域停止</span>
+          <span class="hint-chip">选择三张进入解析</span>
+        </div>
+      </section>
+
+      <p id="status-message" class="status-message" aria-live="assertive"></p>
+    </main>
+
+    <script src="/shared.js" defer></script>
+    <script src="/draw.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+.git
+.codex
+node_modules
+npm-debug.log
+tests
+README.md

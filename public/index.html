@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Night Arcana | 提问</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page-question">
+    <div class="bg-glow bg-glow-left" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-right" aria-hidden="true"></div>
+    <div class="grain-overlay" aria-hidden="true"></div>
+
+    <main class="app-shell app-shell-question">
+      <div class="brand-crest">Night Arcana</div>
+
+      <section class="intro-layout">
+        <section class="hero hero-split">
+          <p class="eyebrow">Spatial Editorial Ritual</p>
+          <h1 class="display-title">让问题先沉入夜色，<br />再交给牌阵回答。</h1>
+          <p class="subtitle hero-copy">
+            这不是把输入框和卡牌堆在同一页，而是一次更完整的占卜路径。你会先提问，再进入悬浮牌阵，最后在独立解析页看见答案。
+          </p>
+
+          <div class="ritual-grid" aria-label="流程说明">
+            <article class="ritual-card">
+              <span class="ritual-index">01</span>
+              <h2>提出问题</h2>
+              <p>把真正困扰你的事情凝练成一句话。</p>
+            </article>
+            <article class="ritual-card">
+              <span class="ritual-index">02</span>
+              <h2>抽取三张牌</h2>
+              <p>在立体悬浮牌阵里，选出最吸引你的三张。</p>
+            </article>
+            <article class="ritual-card">
+              <span class="ritual-index">03</span>
+              <h2>翻面解读</h2>
+              <p>进入独立解析页，按顺序看见单牌与整体建议。</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="question-card question-card-premium">
+          <div class="card-topline">
+            <div class="step-pill">01 · 提问</div>
+            <p class="panel-badge">Question Locked Per Session</p>
+          </div>
+
+          <form id="question-form" class="question-form" novalidate>
+            <label for="question-input">你的问题</label>
+            <textarea
+              id="question-input"
+              name="question"
+              maxlength="120"
+              rows="5"
+              placeholder="例如：接下来三个月，我该如何推进当前的职业选择？"
+              required
+            ></textarea>
+            <div class="question-actions">
+              <p id="question-hint" class="muted">
+                输入 1-120 字。提交后当前问题会被锁定，并直接进入抽卡页面。
+              </p>
+              <button id="question-submit" class="primary-btn" type="submit">进入抽卡</button>
+            </div>
+          </form>
+        </section>
+      </section>
+
+      <p id="status-message" class="status-message" aria-live="assertive"></p>
+    </main>
+
+    <script src="/shared.js" defer></script>
+    <script src="/app.js" defer></script>
+  </body>
+</html>
