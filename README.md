@@ -1,27 +1,162 @@
-# Night Arcana Tarot Web (V1)
+# Night Arcana Tarot Web
 
-暗黑风塔罗抽牌与解读网站实现，包含：
-- 三页流程：提问页、抽卡页、解析页
-- 问题输入（1-120 字）
-- 提问后跳转到独立抽卡页面
-- 立体悬浮卡牌环阵与边缘悬停旋转
-- 选满三张后自动跳转到独立解析页
-- 解析页自动翻牌并展示解读
+一个偏暗黑、强调仪式感的塔罗抽牌与解读网站。项目围绕“一次完整占卜流程”来设计：用户先提问，再进入独立抽卡舞台，选满三张牌后自动进入解析页，最终看到单牌解读、综合总结、风险提醒与行动建议。
 
-## 运行方式
+## 在线入口
+
+根据当前上线记录，项目已经部署到正式域名：
+
+- 正式地址：[https://lovetarot.fun](https://lovetarot.fun)
+- `www` 跳转地址：[https://www.lovetarot.fun](https://www.lovetarot.fun)
+
+## 项目想解决什么问题
+
+这个项目不是把输入框、抽卡区和结果区堆在同一页里，而是把占卜拆成三个连续阶段：
+
+1. 提问
+2. 抽牌
+3. 解读
+
+这样做的目标很明确：
+
+- 让流程更像一次有起承转合的仪式，而不是一次普通表单提交
+- 把页面职责拆开，避免信息过密
+- 让抽卡舞台和结果页都能单独打磨
+- 为后续 AI 增强解读保留稳定接口
+
+## 一次完整占卜流程
+
+### 1. 提问页
+
+用户先在首页输入一个 1 到 120 字的问题。这个阶段只做一件事：明确这次占卜要回答什么。
+
+提交后，前端调用：
+
+```http
+POST /api/reading/start
+```
+
+服务端会：
+
+- 校验问题内容
+- 创建一次新的会话
+- 生成本次牌组顺序
+- 返回 `session_id` 与 `deck_seed`
+
+随后页面跳转到独立抽卡页。
+
+### 2. 抽卡页
+
+抽卡页是整个项目体验最强的一段。这里不是简单的卡片列表，而是一个立体悬浮牌阵：
+
+- 卡牌按环形排布
+- 根据角度计算前后层级、缩放与亮度
+- 鼠标靠近边缘时牌阵会旋转
+- 牌面尺寸会跟随舞台尺寸自适应
+
+用户每选一张牌，前端调用：
+
+```http
+POST /api/reading/{session_id}/select
+```
+
+后端负责保证流程约束：
+
+- 只能在有效会话内选牌
+- 只能选三张
+- 不允许重复选同一张牌
+
+当第三张牌选定后，页面自动跳转到解析页。
+
+### 3. 解析页
+
+解析页会重新向后端发起揭示请求，而不是单纯依赖本地缓存：
+
+```http
+POST /api/reading/{session_id}/reveal
+```
+
+这一步的处理链路是：
+
+1. 先由本地规则库生成基础解读
+2. 如果已配置讯飞星火，则把问题和三张牌信息交给 AI 做增强
+3. 如果 AI 超时、报错或未配置密钥，则自动回退到模板解读
+4. 返回统一结构的占卜结果
+
+最终页面展示的内容包括：
+
+- 三张牌各自的解释
+- 综合总结 `summary`
+- 风险提醒 `risk`
+- 三条行动建议 `advice`
+- 解析来源 `analysis_source`
+
+其中 `analysis_source` 会明确标识当前结果来自：
+
+- `spark`：AI 增强解读
+- `template`：本地模板回退
+
+## 产品流程为什么会变成现在这样
+
+结合开发记录，这个项目不是一次写完的，而是沿着体验问题逐步演进出来的：
+
+- 第一阶段先确定了三页式 PRD、固定三张牌阵和后端接口结构
+- 第二阶段先用 Node.js 原生 `http` 跑通最小闭环，保证流程可用
+- 第三阶段把原本容易堆叠在一起的内容拆成真正的三页流转
+- 第四阶段重点打磨抽卡舞台，把平面环改成更有空间感的立体悬浮牌阵
+- 第五到第八阶段集中优化视觉风格、首屏可见性、低屏高适配和卡片自适应
+- 第九阶段接入讯飞星火，把结果升级为“模板基础 + AI 增强”
+- 第十到第十一阶段继续修复缓存问题、补上来源标识，并把 AI 文风从“模板改写”调整为更像专业塔罗师的解牌口吻
+
+所以当前仓库的重点，不只是“能抽三张牌”，而是尽量把整条路径做成完整、连贯、可落地上线的产品体验。
+
+## 核心能力
+
+- 三页式流程：提问页、抽卡页、解析页
+- Node.js 单进程服务，同时提供静态页面与 `/api/*`
+- 固定三张牌的抽卡流程与会话控制
+- 本地模板解读
+- 讯飞星火 AI 增强解读
+- AI 失败时自动回退，不阻断主流程
+- 解析来源可视化标识
+- 抽卡舞台响应式缩放
+- 桌面端优先，并兼顾低屏高设备显示
+
+## 项目结构
+
+```text
+public/
+  index.html      提问页
+  draw.html       抽卡页
+  reading.html    解析页
+  *.js            前端流程与交互脚本
+  styles.css      全局视觉样式
+
+src/
+  server.js       HTTP 服务入口
+  data/           牌库数据
+  lib/
+    sessionStore.js   会话与抽牌状态
+    readingEngine.js  模板解读逻辑
+    aiReading.js      星火接入、结果标准化与回退
+
+tests/
+  *.test.js       流程、规则与 AI 结果相关测试
+```
+
+## 本地运行
+
+要求：
+
+- Node.js `>=20`
+
+启动项目：
 
 ```bash
 npm start
 ```
 
-默认地址：[http://localhost:3000](http://localhost:3000)
-
-页面路由：
-- `/`：提问页
-- `/draw.html`：抽卡页
-- `/reading.html`：解析页
-
-开发模式（自动重启）：
+开发模式：
 
 ```bash
 npm run dev
@@ -33,138 +168,19 @@ npm run dev
 npm test
 ```
 
-## 部署到公网
+默认访问地址：
 
-这个项目是一个单进程 Node.js 服务：
-- Node 直接提供静态页面
-- 同一个进程处理 `/api/*`
-- 默认会话存储在内存里
+- [http://localhost:3000](http://localhost:3000)
 
-这意味着它很适合先用单机或单容器部署，但暂时不适合直接横向扩容到多实例。
+页面路由：
 
-### 方案一：用 Docker 部署到云服务器
+- `/`：提问页
+- `/draw.html`：抽卡页
+- `/reading.html`：解析页
 
-这是当前仓库最稳、最省心的方式，推荐优先使用。
+## AI 配置
 
-1. 准备一台云主机
-- 系统推荐 Ubuntu 22.04+
-- 开放端口：`80`、`443`
-- 如果要先直连测试，也可以临时开放 `3000`
-
-2. 服务器安装 Docker
-
-3. 把项目代码传到服务器后，在项目根目录执行：
-
-```bash
-docker build -t tarot-app .
-docker run -d \
-  --name tarot-app \
-  --restart unless-stopped \
-  -p 3000:3000 \
-  -e NODE_ENV=production \
-  -e PORT=3000 \
-  -e HOST=0.0.0.0 \
-  tarot-app
-```
-
-如果要启用讯飞星火 AI，再补环境变量：
-
-```bash
-docker run -d \
-  --name tarot-app \
-  --restart unless-stopped \
-  -p 3000:3000 \
-  -e NODE_ENV=production \
-  -e PORT=3000 \
-  -e HOST=0.0.0.0 \
-  -e SPARK_API_PASSWORD="你的 APIPassword" \
-  -e SPARK_MODEL="4.0Ultra" \
-  -e AI_READING_TIMEOUT_MS="15000" \
-  tarot-app
-```
-
-4. 验证服务
-
-```bash
-curl http://127.0.0.1:3000/healthz
-```
-
-返回 `{"ok":true}` 说明服务正常。
-
-5. 用 Nginx 或 Caddy 做反向代理，并配置 HTTPS
-- 域名指向你的服务器公网 IP
-- 反向代理到 `http://127.0.0.1:3000`
-- 证书推荐用 Let's Encrypt
-
-Nginx 反向代理核心配置示意：
-
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-### 方案二：直接部署到支持 Node 的平台
-
-如果你不想自己维护服务器，可以选 Render、Railway、Fly.io 这类平台。
-
-这类平台的关键点是：
-- 启动命令：`npm start`
-- Node 版本：`20+`
-- 环境变量：按需配置 `SPARK_API_PASSWORD`、`SPARK_MODEL`、`AI_READING_TIMEOUT_MS`
-- 健康检查路径：`/healthz`
-
-注意：平台通常会注入 `PORT`，当前服务已经支持读取该变量。
-
-### 域名与 HTTPS
-
-公网可访问至少需要这几步：
-- 购买域名
-- 把域名 A 记录指向服务器公网 IP
-- 配置反向代理
-- 配置 HTTPS 证书
-
-如果你使用云平台托管，很多平台可以直接自动签发 HTTPS。
-
-### 当前项目上线前你需要知道的限制
-
-1. 会话存在内存里
-- 服务重启后，用户正在进行中的抽牌会话会丢失
-- 多实例部署时，请求落到不同实例会导致会话不一致
-
-2. 目前更适合单实例部署
-- 现阶段建议 `1 台服务器 + 1 个 Node 进程` 或 `1 个 Docker 容器`
-
-3. AI 能力依赖外部网络
-- 如果服务器无法访问讯飞星火接口，系统会自动回退到本地模板解读
-- 即使 AI 不可用，网站基本功能仍可访问
-
-### 最小可行上线路径
-
-如果你想最快把它发到公网，建议按这个顺序：
-
-1. 买一台云服务器
-2. 用 Docker 跑这个项目
-3. 域名解析到服务器
-4. 用 Nginx 反代到 `3000`
-5. 配 HTTPS
-6. 再决定是否接入星火 AI
-
-## 接入讯飞星火 AI 解析
-
-当前项目已经支持在解析页调用讯飞星火对模板结果进行增强。如果未配置星火密钥，系统会自动回退到本地模板解析，不影响网站使用。
-
-推荐通过环境变量配置：
+如果你希望解析页启用讯飞星火 AI，可以配置以下环境变量：
 
 ```bash
 export SPARK_API_PASSWORD="你的 APIPassword"
@@ -173,56 +189,51 @@ export AI_READING_TIMEOUT_MS="15000"
 npm start
 ```
 
-如果你使用的是 `Spark Ultra-32K`，建议改成：
+支持的主要配置项：
 
-```bash
-export SPARK_API_PASSWORD="你的 Ultra APIPassword"
-export SPARK_MODEL="4.0Ultra"
-export AI_READING_TIMEOUT_MS="45000"
-npm start
-```
+- `SPARK_API_PASSWORD`
+- `SPARK_MODEL`
+- `SPARK_API_URL`
+- `AI_READING_TIMEOUT_MS`
 
-可选环境变量：
-- `SPARK_API_URL`：默认 `https://spark-api-open.xf-yun.com/v1/chat/completions`
-- `SPARK_MODEL`：默认 `generalv3.5`
-- `AI_READING_TIMEOUT_MS`：默认 `15000`，当模型名包含 `Ultra` 时默认提高到 `45000`
+补充说明：
 
-说明：
-- 当前实现走的是讯飞星火 HTTP 接口，而不是 WebSocket。
-- HTTP 方案需要 `APIPassword`，不是 `APPID / APIKey / APISecret`。
-- 如果你已经在聊天或截图里暴露过现有密钥，建议立刻去讯飞控制台重新生成一套新的凭证。
+- 默认模型是 `generalv3.5`
+- 当模型名包含 `Ultra` 时，默认超时会提升到 `45000ms`
+- 如果未配置密钥，系统会自动使用模板结果，不影响基本功能
 
-## 接口
+## 当前上线形态
 
-### `POST /api/reading/start`
-- 入参：`{ "question": "..." }`
-- 出参：`{ "session_id": "...", "deck_seed": 12345 }`
+结合上线记录，项目当前采用的是“Node 直跑 + systemd 托管 + Caddy 反向代理”的方式，而不是 Docker 常驻。
 
-### `POST /api/reading/{session_id}/select`
-- 入参：`{ "card_id": 1 }`
-- 出参：`{ "selected_count": 1, "is_complete": false }`
+当前记录中的线上环境为：
 
-### `POST /api/reading/{session_id}/reveal`
-- 入参：`{}`
-- 出参：
-  - `cards[3]`：牌名、正逆位、关键词、解释
-  - `summary`
-  - `risk`
-  - `advice`（最多 3 条）
-  - `analysis_source`：`spark` 或 `template`
+- 服务器：阿里云 ECS
+- 系统：Ubuntu 24.04 LTS
+- 运行方式：`systemd` 常驻 Node 服务
+- 反向代理：Caddy
+- 域名：`lovetarot.fun`
 
-## 前端状态机
+之所以没有把 Docker 作为最终线上方案，是因为实际部署时服务器访问 Docker Hub 超时，最终改为直接安装 Node.js 运行服务。对这个项目来说，这条路径更直接，也更适合快速落地。
 
-- `idle`
-- `question_submitted`
-- `deck_animating`
-- `drawing`
-- `draw_complete`
-- `revealing`
-- `analysis_ready`
+## 已覆盖测试
 
-## 兼容性与降级
+当前测试主要覆盖这些核心环节：
 
-- 桌面端优先（Chrome/Safari/Edge 最新稳定版）
-- 支持 `prefers-reduced-motion: reduce` 的动效降级
-- 页面刷新或会话失效时显示恢复提示
+- 问题输入校验
+- 牌组洗牌确定性
+- 模板解析结果结构
+- 三张牌选择流程
+- 会话有效性与揭示约束
+- AI JSON 结果解析
+- AI 结果标准化
+- 提示词避免模板措辞注入
+
+## 后续可继续优化
+
+- 扩充完整 78 张牌库
+- 支持更多牌阵
+- 增加历史记录与会话持久化
+- 增加分享图导出
+- 支持 `.env` 配置
+- 增加 AI 失败重试与更丰富的风格选项
