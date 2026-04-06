@@ -156,6 +156,9 @@ function init() {
 
   dom.question.textContent = flow.question;
   renderSkeleton(flow.selectedIds);
+  void shared.trackPageView('/reading.html', {
+    session_id: flow.sessionId
+  });
 
   dom.restart.addEventListener('click', () => {
     shared.clearFlow();

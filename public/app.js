@@ -39,7 +39,13 @@ async function handleSubmit(event) {
   setStatus('正在召唤牌阵入口...', '');
 
   try {
-    const response = await shared.postJson('/api/reading/start', { question });
+    const response = await shared.postJson(
+      '/api/reading/start',
+      {
+        question,
+        ...shared.buildTrackingPayload('/')
+      }
+    );
     shared.saveFlow({
       sessionId: response.session_id,
       question,
@@ -54,6 +60,8 @@ async function handleSubmit(event) {
 }
 
 function init() {
+  void shared.trackPageView('/');
+
   const flash = shared.consumeFlash();
   if (flash && flash.message) {
     setStatus(flash.message, flash.type || 'error');

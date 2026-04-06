@@ -114,6 +114,8 @@ POST /api/reading/{session_id}/reveal
 
 - 三页式流程：提问页、抽卡页、解析页
 - Node.js 单进程服务，同时提供静态页面与 `/api/*`
+- 内嵌式运营后台 `/admin`
+- SQLite 持久化运营数据与漏斗埋点
 - 固定三张牌的抽卡流程与会话控制
 - 本地模板解读
 - 讯飞星火 AI 增强解读
@@ -129,6 +131,7 @@ public/
   index.html      提问页
   draw.html       抽卡页
   reading.html    解析页
+  admin.html      运营后台页
   *.js            前端流程与交互脚本
   styles.css      全局视觉样式
 
@@ -136,6 +139,7 @@ src/
   server.js       HTTP 服务入口
   data/           牌库数据
   lib/
+    analyticsStore.js 持久化埋点与后台聚合查询
     sessionStore.js   会话与抽牌状态
     readingEngine.js  模板解读逻辑
     aiReading.js      星火接入、结果标准化与回退
@@ -177,6 +181,7 @@ npm test
 - `/`：提问页
 - `/draw.html`：抽卡页
 - `/reading.html`：解析页
+- `/admin`：运营后台
 
 ## AI 配置
 
@@ -195,6 +200,34 @@ npm start
 - `SPARK_MODEL`
 - `SPARK_API_URL`
 - `AI_READING_TIMEOUT_MS`
+
+## 运营后台配置
+
+如果你希望启用运营后台和持久化埋点，需要额外配置：
+
+```bash
+export ADMIN_TOKEN="你的后台口令"
+export SQLITE_PATH="./data/tarot.db"
+export ADMIN_TIMEZONE="Asia/Shanghai"
+npm start
+```
+
+主要配置项：
+
+- `ADMIN_TOKEN`：后台鉴权口令，未配置时后台 API 不可用
+- `SQLITE_PATH`：SQLite 数据库路径，默认 `./data/tarot.db`
+- `ADMIN_TIMEZONE`：后台统计时区，默认 `Asia/Shanghai`
+
+后台当前可查看：
+
+- 首页访问、发起占卜、抽牌完成、解读完成漏斗
+- AI 成功率、回退率、平均耗时和 P95 耗时
+- 最近占卜记录、来源、设备分布和 UTM 活动
+
+相关文档：
+
+- [部署与运维技术文档](./部署与运维技术文档.md)
+- [后台运营数据技术文档](./后台运营数据技术文档.md)
 
 补充说明：
 

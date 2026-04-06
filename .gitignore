@@ -8,3 +8,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+data/*.db
+data/*.db-shm
+data/*.db-wal

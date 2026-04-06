@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Night Arcana | 运营后台</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body class="page-admin">
+    <div class="bg-glow bg-glow-left" aria-hidden="true"></div>
+    <div class="bg-glow bg-glow-right" aria-hidden="true"></div>
+    <div class="grain-overlay" aria-hidden="true"></div>
+
+    <main class="app-shell app-shell-admin">
+      <div class="brand-crest">Night Arcana Admin</div>
+
+      <header class="admin-header">
+        <div class="admin-header-copy">
+          <p class="eyebrow">Operations Console</p>
+          <h1 class="page-title admin-hero-title">运营数据面板</h1>
+          <p class="page-summary admin-hero-summary">
+            聚焦访问、发起占卜、抽牌完成、解读完成和 AI 回退情况。
+          </p>
+        </div>
+        <div class="admin-header-actions">
+          <button id="logout-btn" class="ghost-btn" type="button" hidden>退出登录</button>
+        </div>
+      </header>
+
+      <section id="login-panel" class="admin-card admin-login-card">
+        <div class="admin-panel-head">
+          <div>
+            <p class="panel-badge">Admin Access</p>
+            <h2>输入后台 Token</h2>
+          </div>
+        </div>
+        <form id="login-form" class="admin-login-form">
+          <label for="admin-token">后台口令</label>
+          <input id="admin-token" name="token" type="password" placeholder="请输入 ADMIN_TOKEN" autocomplete="current-password" />
+          <button class="primary-btn" type="submit">进入后台</button>
+        </form>
+      </section>
+
+      <section id="dashboard" hidden>
+        <section class="admin-card admin-toolbar">
+          <div class="range-tabs" id="range-tabs" aria-label="时间范围">
+            <button data-range="1d" type="button">24 小时</button>
+            <button data-range="7d" type="button" class="active">7 天</button>
+            <button data-range="30d" type="button">30 天</button>
+          </div>
+          <div class="admin-toolbar-actions">
+            <label class="admin-toggle">
+              <input id="auto-refresh" type="checkbox" />
+              <span>60 秒自动刷新</span>
+            </label>
+            <button id="refresh-btn" class="ghost-btn" type="button">刷新数据</button>
+          </div>
+        </section>
+
+        <p id="admin-status" class="status-message" aria-live="polite"></p>
+
+        <section id="summary-grid" class="admin-metric-grid" aria-label="核心指标"></section>
+
+        <section class="admin-grid admin-grid-two">
+          <section class="admin-card">
+            <div class="admin-panel-head">
+              <div>
+                <p class="panel-badge">Funnel</p>
+                <h2>转化漏斗</h2>
+              </div>
+            </div>
+            <div id="funnel-list" class="funnel-list"></div>
+          </section>
+
+          <section class="admin-card">
+            <div class="admin-panel-head">
+              <div>
+                <p class="panel-badge">AI Health</p>
+                <h2>AI 表现</h2>
+              </div>
+            </div>
+            <div id="ai-metrics" class="admin-stat-list"></div>
+          </section>
+        </section>
+
+        <section class="admin-grid admin-grid-two">
+          <section class="admin-card">
+            <div class="admin-panel-head">
+              <div>
+                <p class="panel-badge">Trend</p>
+                <h2>趋势</h2>
+              </div>
+            </div>
+            <div id="trend-chart" class="trend-chart"></div>
+          </section>
+
+          <section class="admin-card">
+            <div class="admin-panel-head">
+              <div>
+                <p class="panel-badge">Traffic</p>
+                <h2>来源与设备</h2>
+              </div>
+            </div>
+            <div class="traffic-grid">
+              <section class="traffic-panel">
+                <h3>来源</h3>
+                <div id="top-referrers" class="admin-mini-list"></div>
+              </section>
+              <section class="traffic-panel">
+                <h3>UTM 活动</h3>
+                <div id="top-campaigns" class="admin-mini-list"></div>
+              </section>
+              <section class="traffic-panel">
+                <h3>设备</h3>
+                <div id="device-breakdown" class="admin-mini-list"></div>
+              </section>
+            </div>
+          </section>
+        </section>
+
+        <section class="admin-card">
+          <div class="admin-panel-head">
+            <div>
+              <p class="panel-badge">Recent Readings</p>
+              <h2>最近占卜记录</h2>
+            </div>
+          </div>
+          <div class="admin-table-wrap">
+            <table class="admin-table">
+              <thead>
+                <tr>
+                  <th>时间</th>
+                  <th>问题</th>
+                  <th>抽牌</th>
+                  <th>解读</th>
+                  <th>AI</th>
+                  <th>耗时</th>
+                  <th>设备</th>
+                  <th>来源</th>
+                </tr>
+              </thead>
+              <tbody id="recent-readings"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <script src="/shared.js" defer></script>
+    <script src="/admin.js" defer></script>
+  </body>
+</html>

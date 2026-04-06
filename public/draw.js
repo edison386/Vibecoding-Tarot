@@ -450,6 +450,9 @@ function init() {
   appState.flow = flow;
   dom.questionEcho.textContent = flow.question;
   updateSelectionCounter();
+  void shared.trackPageView('/draw.html', {
+    session_id: flow.sessionId
+  });
 
   dom.restartLink.addEventListener('click', (event) => {
     event.preventDefault();
